@@ -8,4 +8,6 @@ All the code is written in C++ using the OpenGL library.
 
 # Tasks
 
-1. Geometric Transformation
+1. Geometric Transformation (Translate and Rotate)
+
+2. Curves and Surfaces (Bezier, Hermite and BSplines)
