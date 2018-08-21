@@ -6,36 +6,12 @@
 #include <GLUT/glut.h>
 #include "curves.h"
 
-// Numero PI
-#define myPI 3.14159265
-
-// Dom�nio e Contra-Dominio Carteziano para o Exercicio de Tranforma��es
-
-
-// largua e altura das dimen��es da Janela do Windows
+#define PI 3.14159265
 #define LARGURA_WINDOW 400
 #define ALTURA_WINDOW  400
-
-// posi��o inicial (canto esquerdo superior) da janela Windoes 
 #define POSWX 250
 #define POSWY 150
 
-// tangentes iniciais e finais dos dois pontos da curva de Hermite
-#define tang1x 10.0f
-#define tang1y -145.0f
-#define tang2x 10.0f
-#define tang2y -185.0f
-
-GLfloat P[2][4]; // para Hermite
-
-// variaveis de controle
-GLboolean GET_POINTS = 0;   // GET_POINTS = 0 n�o est� pegando pontos; GET_POINTS = 1, est� pegando pontos
-GLint     TOTAL_POINTS = 0;  // total de pontos das curvas de Bezier e Hermite
-
-GLfloat bx, by;  // pontos inseridos para as curvas
-
-
-// estrutura para um ponto no espa�o 3D
 struct Ponto
 {
     GLfloat x;
