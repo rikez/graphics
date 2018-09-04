@@ -1,5 +1,6 @@
 #include "curves.h"
 #include <math.h>
+#include <iostream>
 
 
 GLfloat Bezier::gtX = 400.0f;
@@ -7,10 +8,10 @@ GLfloat Bezier::gtY = 400.0f;
 GLfloat Bezier::ltX = 0.0f;
 GLfloat Bezier::ltY = 0.0f;
 
-GLfloat Hermite::tang1X = 10.0f;
-GLfloat Hermite::tang1Y = -145.0f;
-GLfloat Hermite::tang2X = 10.0f;
-GLfloat Hermite::tang2Y = -185.0f;
+GLfloat Hermite::tang1X = 1000.0f;
+GLfloat Hermite::tang1Y = 0.0f;
+GLfloat Hermite::tang2X = -1000.0f;
+GLfloat Hermite::tang2Y = 0.0f;
 
 GLfloat Parabola::gtX = 200.0f;
 GLfloat Parabola::ltX = -200.0f;
@@ -18,8 +19,12 @@ GLfloat Parabola::gtY = 200.0f;
 GLfloat Parabola::ltY = -200.0f;
 
 void Bezier::draw(struct CurvePoints* cp) {
-    const GLint DIMX = Bezier::ltX + Bezier::gtX + 1;
-    const GLint DIMY = Bezier::ltY + Bezier::gtY + 1;
+
+    GLfloat B[4][4] = { { -1.0f, 3.0f, -3.0f, 1.0f },
+                        { 3.0f, -6.0f, 3.0f, 0.0f },
+                        { -3.0f, 3.0f, 0.0f, 0.0f },
+                        { 1.0f, 0.0f, 0.0f, 0.0f }
+    };
 
     // se o numero de pontos fornecidos for zero
     // GET_POINTSD = Status de atribui��o de pontos pelo mouse
@@ -44,6 +49,7 @@ void Bezier::draw(struct CurvePoints* cp) {
     }
 
 
+
     // exibe os 4  pontos de controle
     glColor3f(1.0, 0.0f, 0.0f);
     glPointSize(5.0f);
@@ -57,9 +63,43 @@ void Bezier::draw(struct CurvePoints* cp) {
     }
 
 
+
     if (total_points == 4)
     {
-        // calcule aqui sua curva de Bezier
+        GLfloat T[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        float pace = 0.01;
+
+        GLfloat Mx[4];
+        Mx[0] = matrix[0][0];
+        Mx[1] = matrix[1][0];
+        Mx[2] = matrix[2][0];
+        Mx[3] = matrix[3][0];
+        GLfloat xinitial = multiply(T, B, Mx);
+
+        GLfloat My[4];
+        My[0] = matrix[0][1];
+        My[1] = matrix[1][1];
+        My[2] = matrix[2][1];
+        My[3] = matrix[3][1];
+        GLfloat yinitial = multiply(T, B, My);
+        GLfloat xfinal, yfinal;
+
+        for (float i = pace; i <= 1; i += pace) {
+            T[0] = (GLfloat) pow(i, 3);
+            T[1] = (GLfloat) pow(i, 2);
+            T[2] = (GLfloat) i;
+
+            xfinal = multiply(T, B, Mx);
+            yfinal = multiply(T, B, My);
+
+            glBegin(GL_LINE_STRIP);
+            glVertex2f(xinitial, yinitial);
+            glVertex2f(xfinal, yfinal);
+            glEnd();
+
+            yinitial = yfinal;
+            xinitial = xfinal;
+        }
     }
 
 }
@@ -101,17 +141,53 @@ void Hermite::draw(struct CurvePoints* cp) {
     glPointSize(5.0f);
     for (int i = 0; i < total_points; i++)
     {
-        //printf("\n%f %f", B[i][0], B[i][1]);
+        printf("\n%f %f", matrix[i][0], matrix[i][1]);
         glBegin(GL_POINTS);
         glVertex2f(matrix[i][0], matrix[i][1]);
         glEnd();
     }
 
-    GLfloat T[4];
-    GLfloat M[4];
+
 
     if (total_points == 2)
     {
+
+        GLfloat T[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        float pace = 0.01;
+
+        GLfloat Mx[4];
+        Mx[0] = matrix[0][0];
+        Mx[1] = matrix[1][0];
+        Mx[2] = matrix[0][2];
+        Mx[3] = matrix[1][2];
+        GLfloat xinitial = multiply(T, H, Mx);
+
+        GLfloat My[4];
+        My[0] = matrix[0][1];
+        My[1] = matrix[1][1];
+        My[2] = matrix[0][3];
+        My[3] = matrix[1][3];
+        GLfloat yinitial = multiply(T, H, My);
+        GLfloat xfinal;
+        GLfloat yfinal;
+
+        // t^3 + tˆ2 + t + 1
+        for (float i = pace; i <= 1; i += pace) {
+            T[0] = (GLfloat) pow(i, 3);
+            T[1] = (GLfloat) pow(i, 2);
+            T[2] = (GLfloat) i;
+
+            xfinal = multiply(T, H, Mx);
+            yfinal = multiply(T, H, My);
+
+            glBegin(GL_LINE_STRIP);
+            glVertex2f(xinitial, yinitial);
+            glVertex2f(xfinal, yfinal);
+            glEnd();
+
+            yinitial = yfinal;
+            xinitial = xfinal;
+        }
         // calcule aqui sua curva de hermite
     }
 }
@@ -124,6 +200,30 @@ GLfloat Hermite::multiply(GLfloat T[], GLfloat H[][4], GLfloat M[])
     for (int i = 0; i < 4; i++)
     {
     HM[i] = 0;
+        for (int j = 0; j < 4; j++)
+        {
+            HM[i] = HM[i] + H[i][j] * M[j];
+        }
+    }
+
+    // multiplica T * HM
+    GLfloat R = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        R = R + T[i] * HM[i];
+    }
+
+    return R;
+}
+
+GLfloat Bezier::multiply(GLfloat T[], GLfloat H[][4], GLfloat M[])
+{
+    GLfloat HM[4];
+
+    // multiplica primeiro H por M
+    for (int i = 0; i < 4; i++)
+    {
+        HM[i] = 0;
         for (int j = 0; j < 4; j++)
         {
             HM[i] = HM[i] + H[i][j] * M[j];

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     // GLUT_SINGLE significa que vai usar 1 buffer s� (se for usar anima��o ou 3D use GLUT_DOUBLE)
     // aqui, como o c�digo � 2D usamos 1 buffer
     // GLUT_RGB significa que cada pixel � RGB
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
     // Especifica a posi��o inicial da janela GLUT
     glutInitWindowPosition(POSWX, POSWY);
@@ -150,8 +150,8 @@ void on_keyboard_ev(unsigned char key, int x, int y)
 void on_mouse_ev(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON) {
-//        cp2.x = x; cp2.y = 400 - y;
-//        hermite.get_points = 1;
+        //cp2.x = x; cp2.y = 400 - y;
+        //hermite.get_points = 1;
 
         cp.x = x; cp.y = 400 - y;
         bezier.get_points = 1;
@@ -159,8 +159,8 @@ void on_mouse_ev(int button, int state, int x, int y)
         bezier.get_points = 0;
         bezier.total_points = 0;
 
-//        hermite.get_points = 0;
-//        hermite.total_points = 0;
+        //hermite.get_points = 0;
+        //hermite.total_points = 0;
     }
 
     glutPostRedisplay();

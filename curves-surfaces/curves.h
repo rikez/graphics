@@ -19,6 +19,7 @@ struct Bezier {
     static GLfloat ltX;
     static GLfloat ltY;
     void draw(struct CurvePoints* cp);
+    GLfloat multiply(GLfloat T[], GLfloat H[][4], GLfloat M[]);
 };
 
 struct Hermite {
